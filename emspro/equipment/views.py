@@ -97,8 +97,12 @@ class EnergyConsumptionFilter(filters.FilterSet):
         model = EnergyConsumption
         fields ={
             'equipment': ['exact'],
-            'energy_type': ['exact'],
-            'energysource': ['exact'],
+            'in_energy_type': ['exact'],
+            'in_energysource': ['exact'],
+            'in_energy_quantity': ['exact'],
+            'out_energy_type': ['exact'],
+            'out_energysource': ['exact'],
+            'out_energy_quantity': ['exact'],
             'energy_used': ['exact', 'icontains'],
             'cost': ['exact', 'icontains'],
             'expect_cost': ['exact', 'icontains'],

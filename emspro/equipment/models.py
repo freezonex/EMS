@@ -93,14 +93,19 @@ class Equipment(models.Model):
 
 class EnergyConsumption(models.Model):
     equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE, related_name='consumptions')
-    energy_type = models.CharField(max_length=100, default='Electricity')  # Default value for 'energy_type'
-    energysource = models.ForeignKey(EnergySource, on_delete=models.CASCADE)
+    in_energysource = models.ForeignKey(EnergySource, on_delete=models.CASCADE, related_name='in_consumptions',default='1')
+    in_energy_type = models.CharField(max_length=100, default='Electricity')  # Default value for 'energy_type'
+    in_energy_quantity = models.FloatField(default=0.0)
+    out_energy_type = models.CharField(max_length=100, default='Electricity')  # Default value for 'energy_type'
+    out_energysource = models.ForeignKey(EnergySource, on_delete=models.CASCADE, related_name='out_consumptions',default='2')
+    out_energy_quantity = models.FloatField(default=0.0)
     energy_used = models.FloatField(default=0.0)  # Default value for 'energy_used'
     cost = models.FloatField(default=0.0)
     expect_used = models.FloatField(default=0.0)  # Default value for 'energy_used'
     expect_cost = models.FloatField(default=0.0)
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
+
 
 class MaintenanceRecord(models.Model):
     equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE, related_name='maintenance_records')
