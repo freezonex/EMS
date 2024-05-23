@@ -79,11 +79,11 @@ WSGI_APPLICATION = "emspro.wsgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'shimu1',
-        'USER': 'root',
+        'NAME': 'ems',
+        'USER': 'ems',
         'PASSWORD': 'Supos@1304',
-        'HOST': '192.168.31.129',  # Or an IP Address that your DB is hosted on
-        'PORT': '3306',  # Default MySQL port
+        'HOST': 'office.unibutton.com',  # Or an IP Address that your DB is hosted on
+        'PORT': '5421',  # Default MySQL port
     }
 }
 
