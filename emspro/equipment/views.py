@@ -145,6 +145,7 @@ class EnergySourceFilter(filters.FilterSet):
             'type': ['exact'],
             'supplier': ['exact'],
             'price': ['exact'],
+            'current_reservation': ['exact'],
             'create_time': [],
             'update_time': [],
         }

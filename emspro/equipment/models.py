@@ -70,6 +70,7 @@ class EnergySource(models.Model):
     )
     type = models.CharField(max_length=100, default='default_type')
     supplier = models.CharField(max_length=100, default='default_supplier')
+    current_reservation = models.FloatField(default=0.0)
     price = models.FloatField()
     level = models.IntegerField(default=1)
     create_time = models.DateTimeField(auto_now_add=True)
