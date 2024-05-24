@@ -17,48 +17,54 @@ class Workshop(models.Model):
             equipment__workshop=self
         ).aggregate(total_energy=Sum('energy_used'))['total_energy'] or 0
 
-    def Oneday_energy_consumption(self, date=None,energy_type=None):
-        if date is None:
-            date = timezone.now().date()  # defaults to today if no date is provided
-        # This calculates daily energy consumption for all equipment in this workshop
+    def total_expected_energy_consumption(self):
+        # This fetches the total energy consumption for all equipment in this workshop
         return EnergyConsumption.objects.filter(
-            equipment__workshop=self,
-            create_time__date=date,
-        ).aggregate(daily_energy=Sum('energy_used'))['daily_energy'] or 0
+            equipment__workshop=self
+        ).aggregate(total_expect_energy=Sum('expect_used'))['total_expect_energy'] or 0
 
-    def daily_energy_consumption(self, start_date=None, end_date=None, energy_type=None):
-        # Ensure that dates are parsed if they are provided as strings
-        if start_date and isinstance(start_date, str):
-            start_date = parse_date(start_date)
-        if end_date and isinstance(end_date, str):
-            end_date = parse_date(end_date)
-        elif not end_date:  # Default to today if no end date provided
-            end_date = timezone.now().date()
-
-        # Build the base query
-        consumptions = EnergyConsumption.objects.filter(equipment__workshop=self)
-
-        # Apply date range filter only if a start date is provided
-        if start_date==None:
-            start_date = parse_date("2024-05-21")
-            consumptions = consumptions.filter(create_time__date__range=(start_date, end_date))
-        else:
-            consumptions = consumptions.filter(create_time__date__range=(start_date, end_date))
-
-        # Filter by energy type if provided
-        if energy_type!=None:
-            consumptions = consumptions.filter(energy_type=energy_type)
-
-        # Group by date and energy type, and aggregate energy used
-        data = consumptions.annotate(
-            date=TruncDate('create_time')
-        ).values('date', 'energy_type').annotate(
-            daily_energy=Sum('energy_used')
-        ).order_by('date', 'energy_type')
-
-        # Formatting the result as a list of dictionaries
-        return [{'date': entry['date'], 'energy_type': entry['energy_type'], 'daily_energy': entry['daily_energy']} for
-                entry in data]
+    # def Oneday_energy_consumption(self, date=None,energy_type=None):
+    #     if date is None:
+    #         date = timezone.now().date()  # defaults to today if no date is provided
+    #     # This calculates daily energy consumption for all equipment in this workshop
+    #     return EnergyConsumption.objects.filter(
+    #         equipment__workshop=self,
+    #         create_time__date=date,
+    #     ).aggregate(daily_energy=Sum('energy_used'))['daily_energy'] or 0
+    #
+    # def daily_energy_consumption(self, start_date=None, end_date=None, energy_type=None):
+    #     # Ensure that dates are parsed if they are provided as strings
+    #     if start_date and isinstance(start_date, str):
+    #         start_date = parse_date(start_date)
+    #     if end_date and isinstance(end_date, str):
+    #         end_date = parse_date(end_date)
+    #     elif not end_date:  # Default to today if no end date provided
+    #         end_date = timezone.now().date()
+    #
+    #     # Build the base query
+    #     consumptions = EnergyConsumption.objects.filter(equipment__workshop=self)
+    #
+    #     # Apply date range filter only if a start date is provided
+    #     if start_date==None:
+    #         start_date = parse_date("2024-05-21")
+    #         consumptions = consumptions.filter(create_time__date__range=(start_date, end_date))
+    #     else:
+    #         consumptions = consumptions.filter(create_time__date__range=(start_date, end_date))
+    #
+    #     # Filter by energy type if provided
+    #     if energy_type!=None:
+    #         consumptions = consumptions.filter(energy_type=energy_type)
+    #
+    #     # Group by date and energy type, and aggregate energy used
+    #     data = consumptions.annotate(
+    #         date=TruncDate('create_time')
+    #     ).values('date', 'energy_type').annotate(
+    #         daily_energy=Sum('energy_used')
+    #     ).order_by('date', 'energy_type')
+    #
+    #     # Formatting the result as a list of dictionaries
+    #     return [{'date': entry['date'], 'energy_type': entry['energy_type'], 'daily_energy': entry['daily_energy']} for
+    #             entry in data]
 
 class EnergySource(models.Model):
     parent = models.ForeignKey(
@@ -95,9 +101,7 @@ class Equipment(models.Model):
 class EnergyConsumption(models.Model):
     equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE, related_name='consumptions')
     in_energysource = models.ForeignKey(EnergySource, on_delete=models.CASCADE, related_name='in_consumptions',default='1')
-    in_energy_type = models.CharField(max_length=100, default='Electricity')  # Default value for 'energy_type'
     in_energy_quantity = models.FloatField(default=0.0)
-    out_energy_type = models.CharField(max_length=100, default='Electricity')  # Default value for 'energy_type'
     out_energysource = models.ForeignKey(EnergySource, on_delete=models.CASCADE, related_name='out_consumptions',default='2')
     out_energy_quantity = models.FloatField(default=0.0)
     energy_used = models.FloatField(default=0.0)  # Default value for 'energy_used'
@@ -109,6 +113,7 @@ class EnergyConsumption(models.Model):
 
 
 class MaintenanceRecord(models.Model):
+    energy_consumption = models.ForeignKey(EnergyConsumption, on_delete=models.CASCADE,default=1)
     equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE, related_name='maintenance_records')
     operator = models.CharField(max_length=100, default='Unknown Operator')  # Default value for 'operator'
     details = models.TextField(default='No details provided.')  # Default value for 'details'

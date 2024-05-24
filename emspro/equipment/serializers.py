@@ -6,6 +6,11 @@ class WorkshopSerializer(serializers.ModelSerializer):
         model = Workshop
         fields = '__all__'
 
+
+class WorkshopEnergySerializer(serializers.Serializer):
+    name = serializers.CharField()
+    total_energy_used = serializers.FloatField()
+
 class EquipmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Equipment
@@ -16,7 +21,9 @@ class EnergyConsumptionSerializer(serializers.ModelSerializer):
         model = EnergyConsumption
         fields = '__all__'
 
-
+class EquipmentEnergySerializer(serializers.Serializer):
+    name = serializers.CharField()
+    energy_used = serializers.FloatField()
 
 
 
@@ -31,6 +38,11 @@ class EnergySourceSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Parent ID is required for level 2 and 3 energy sources.")
         return data
 
+
+
+class EnergyTypeUsageSerializer(serializers.Serializer):
+    energy_type = serializers.CharField()
+    percentage = serializers.FloatField()
 
 class MaintenanceRecordSerializer(serializers.ModelSerializer):
     class Meta:
