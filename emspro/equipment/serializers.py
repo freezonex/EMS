@@ -25,19 +25,15 @@ class EquipmentEnergySerializer(serializers.Serializer):
     name = serializers.CharField()
     energy_used = serializers.FloatField()
 
-
+class EnergyBalanceSerializer(serializers.Serializer):
+    actually_used = serializers.FloatField()
+    energy_used = serializers.FloatField()
+    time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S")
 
 class EnergySourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = EnergySource
         fields = '__all__'
-
-    def validate(self, data):
-        # Check if the level of the energy source is 2 or 3 and require a parent
-        if data.get('level') in [2, 3] and not data.get('parent'):
-            raise serializers.ValidationError("Parent ID is required for level 2 and 3 energy sources.")
-        return data
-
 
 
 class EnergyTypeUsageSerializer(serializers.Serializer):
