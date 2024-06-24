@@ -12,7 +12,7 @@ This repository contains the Energy Management System (EMS) designed to monitor,
 ## Technologies Used
 
 - Django REST Framework: For building the API that handles data interactions.
-- PostgreSQL: As the database backend for storing all energy consumption records.
+- MySQL: As the database backend for storing all energy consumption records.
 - React: For building an interactive front-end to display energy data.
 
 ## Installation
@@ -29,9 +29,11 @@ pip install -r requirements.txt
 ```
 
 # Set up the database (Mysql)
+```bash
 cd emspro
-# change the settings.py file,config the database settings
+```
 
+# Change the settings.py file,config the database settings
 ```bash
 # Apply migrations
 python manage.py makemigrations
