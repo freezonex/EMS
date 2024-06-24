@@ -32,8 +32,21 @@ pip install -r requirements.txt
 ```bash
 cd emspro
 ```
+Change the settings.py file,config the database settings
 
-# Change the settings.py file,config the database settings
+```bash
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': '',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': 'URL',  # Or an IP Address that your DB is hosted on
+        'PORT': 'PORT',  # Default MySQL port
+    }
+}
+```
+
 ```bash
 # Apply migrations
 python manage.py makemigrations
@@ -41,3 +54,4 @@ python manage.py migrate
 
 # Start the server
 python manage.py runserver
+```
