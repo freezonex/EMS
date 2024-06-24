@@ -83,7 +83,7 @@ DATABASES = {
         'NAME': 'ems',
         'USER': 'admin',
         'PASSWORD': 'Supos@1304',
-        'HOST': 'URL',  # Or an IP Address that your DB is hosted on
+        'HOST': 'office.unibutton.com',  # Or an IP Address that your DB is hosted on
         'PORT': '5421',  # Default MySQL port
     }
 }
