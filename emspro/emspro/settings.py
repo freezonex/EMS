@@ -81,7 +81,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ems',
-        'USER': 'ems',
+        'USER': 'admin',
         'PASSWORD': 'Supos@1304',
         'HOST': 'office.unibutton.com',  # Or an IP Address that your DB is hosted on
         'PORT': '5421',  # Default MySQL port
