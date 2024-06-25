@@ -6,6 +6,13 @@ class WorkshopSerializer(serializers.ModelSerializer):
         model = Workshop
         fields = '__all__'
 
+class WorkshopListRequestSerializer(serializers.Serializer):
+    workshop_id = serializers.IntegerField(required=False)
+    workshop_name = serializers.CharField(required=False)
+    page_number = serializers.IntegerField(required=True)
+    page_size = serializers.IntegerField(required=True)
+
+
 
 class WorkshopEnergySerializer(serializers.Serializer):
     name = serializers.CharField()
