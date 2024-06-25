@@ -31,18 +31,19 @@ pip install -r requirements.txt
 # Set up the database (Mysql)
 ```bash
 cd emspro
+cp settings_example.py settings.py
 ```
-Change the settings.py file,config the database settings
+Change the DATABASES section to provide information for MySQL 8.0 connection
 
 ```bash
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': 'URL',  # Or an IP Address that your DB is hosted on
-        'PORT': 'PORT',  # Default MySQL port
+        'NAME': '******',  # Database name
+        'USER': '******',  # Username used to connect MySQL 8.0
+        'PASSWORD': '******',  #Password for the MySQL 8.0 user
+        'HOST': '******',  # Domain or IP Address that your DB is hosted on
+        'PORT': '****',  # MySQL 8.0 port         
     }
 }
 ```
