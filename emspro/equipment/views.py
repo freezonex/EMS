@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from django_filters import DateFilter, DateTimeFromToRangeFilter
 from rest_framework import viewsets, status
 from .models import Workshop, Equipment,EnergyConsumption,EnergySource,MaintenanceRecord,AlarmRecord,EnergyPlan
-from .serializers import WorkshopSerializer, EquipmentSerializer,EnergyConsumptionSerializer,EnergySourceSerializer,MaintenanceRecordSerializer,EquipmentEnergySerializer,WorkshopListRequestSerializer,EnergyTypeUsageSerializer,EnergyBalanceSerializer,EnergyPlanSerializer,AlarmRecordSerializer,EquipmentListRequestSerializer,EnergySourceListRequestSerializer
-from .swagger_definitions import workshop_list_params,equipment_list_params,energysource_list_params
+from .serializers import WorkshopSerializer, EquipmentSerializer,EnergyConsumptionSerializer,EnergySourceSerializer,MaintenanceRecordSerializer,EquipmentEnergySerializer,WorkshopListRequestSerializer,EnergyTypeUsageSerializer,EnergyBalanceSerializer,EnergyPlanSerializer,AlarmRecordSerializer,EquipmentListRequestSerializer,EnergySourceListRequestSerializer,EnergyConsumptionListRequestSerializer,EnergyPlanListRequestSerializer,MaintenanceListRequestSerializer,AlarmListRequestSerializer
+from .swagger_definitions import workshop_list_params,equipment_list_params,energysource_list_params,energyconsumption_list_params,energyplan_list_params,maintenance_list_params,alarm_list_params
 from drf_yasg.utils import swagger_auto_schema
 from .commonfunc import StandardResultsSetPagination
 
@@ -166,9 +166,43 @@ class EnergyConsumptionViewSet(viewsets.ModelViewSet):
     serializer_class = EnergyConsumptionSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = EnergyConsumptionFilter
+    pagination_class = StandardResultsSetPagination
+    @action(methods=['post'], detail=False,url_path='consumptionList')
+    @swagger_auto_schema(
+        request_body=energyconsumption_list_params,
+        responses={200: EnergyConsumptionSerializer(many=True)},
+        operation_description="Post list of consumption with pagination"
+    )
+    def post_list(self, request):
+        serializer = EnergyConsumptionListRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            queryset = self.get_queryset().filter(deleted=0)
+            filter_kwargs = {}
+            if 'consumption_id' in serializer.validated_data:
+                filter_kwargs['consumption_id'] = serializer.validated_data['consumption_id']
+            if 'consumption_name' in serializer.validated_data:
+                filter_kwargs['name__icontains'] = serializer.validated_data['consumption_name']
+            # Use the paginator directly here, relying on it to pull data from POST
+            queryset = self.filter_queryset(self.get_queryset().filter(**filter_kwargs))
+            paginator = self.pagination_class()
+            page = paginator.paginate_queryset(queryset, request, self)
+
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return paginator.get_paginated_response(serializer.data)
+
+        return Response({"code": 400, "message": "Invalid data", "data": serializer.errors},
+                        status=status.HTTP_400_BAD_REQUEST)
 
 
+    @action(methods=['post'], detail=True, url_path='delete')
+    def soft_delete(self, request, pk=None):
+        consumption = self.get_object()
+        consumption.deleted = 1
+        consumption.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
+    # Custom 'list' action that accepts POST to fetch data
 
 
 class EnergySourceFilter(filters.FilterSet):
@@ -203,11 +237,11 @@ class EnergySourceViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=False,url_path='energysourceList')
     @swagger_auto_schema(
         request_body=energysource_list_params,
-        responses={200: EquipmentSerializer(many=True)},
+        responses={200: EnergySourceSerializer(many=True)},
         operation_description="Post list of energysource with pagination"
     )
     def post_list(self, request):
-        serializer = EquipmentListRequestSerializer(data=request.data)
+        serializer = EnergySourceListRequestSerializer(data=request.data)
         if serializer.is_valid():
             queryset = self.get_queryset().filter(deleted=0)
             filter_kwargs = {}
@@ -261,6 +295,43 @@ class EnergyPlanViewSet(viewsets.ModelViewSet):
     serializer_class = EnergyPlanSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = EnergyPlanFilter
+    pagination_class = StandardResultsSetPagination
+    @action(methods=['post'], detail=False,url_path='energyplanList')
+    @swagger_auto_schema(
+        request_body= energyplan_list_params,
+        responses={200: EnergyPlanSerializer(many=True)},
+        operation_description="Post list of energyplan with pagination"
+    )
+    def post_list(self, request):
+        serializer = EnergyPlanListRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            queryset = self.get_queryset().filter(deleted=0)
+            filter_kwargs = {}
+            if 'plan_id' in serializer.validated_data:
+                filter_kwargs['plan_id'] = serializer.validated_data['plan_id']
+            if 'plan_name' in serializer.validated_data:
+                filter_kwargs['name__icontains'] = serializer.validated_data['plan_id']
+            # Use the paginator directly here, relying on it to pull data from POST
+            queryset = self.filter_queryset(self.get_queryset().filter(**filter_kwargs))
+            paginator = self.pagination_class()
+            page = paginator.paginate_queryset(queryset, request, self)
+
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return paginator.get_paginated_response(serializer.data)
+
+        return Response({"code": 400, "message": "Invalid data", "data": serializer.errors},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+
+    @action(methods=['post'], detail=True, url_path='delete')
+    def soft_delete(self, request, pk=None):
+        energysource = self.get_object()
+        energysource.deleted = 1
+        energysource.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    # Custom 'list' action that accepts POST to fetch data
 
 
 
@@ -286,7 +357,43 @@ class AlarmRecordViewSet(viewsets.ModelViewSet):
     serializer_class = AlarmRecordSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = AlarmRecordFilter
+    pagination_class = StandardResultsSetPagination
+    @action(methods=['post'], detail=False,url_path='alarmList')
+    @swagger_auto_schema(
+        request_body= alarm_list_params,
+        responses={200: AlarmRecordSerializer(many=True)},
+        operation_description="Post list of alarm with pagination"
+    )
+    def post_list(self, request):
+        serializer = AlarmListRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            queryset = self.get_queryset().filter(deleted=0)
+            filter_kwargs = {}
+            if 'alarm_id' in serializer.validated_data:
+                filter_kwargs['plan_id'] = serializer.validated_data['plan_id']
+            if 'equipment_id' in serializer.validated_data:
+                filter_kwargs['equipment_id'] = serializer.validated_data['equipment_id']
+            # Use the paginator directly here, relying on it to pull data from POST
+            queryset = self.filter_queryset(self.get_queryset().filter(**filter_kwargs))
+            paginator = self.pagination_class()
+            page = paginator.paginate_queryset(queryset, request, self)
 
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return paginator.get_paginated_response(serializer.data)
+
+        return Response({"code": 400, "message": "Invalid data", "data": serializer.errors},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+
+    @action(methods=['post'], detail=True, url_path='delete')
+    def soft_delete(self, request, pk=None):
+        alarm = self.get_object()
+        alarm.deleted = 1
+        alarm.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    # Custom 'list' action that accepts POST to fetch data
 
 
 class MaintenanceRecordFilter(filters.FilterSet):
@@ -310,5 +417,43 @@ class MaintenanceRecordViewSet(viewsets.ModelViewSet):
     serializer_class = MaintenanceRecordSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = MaintenanceRecordFilter
+    pagination_class = StandardResultsSetPagination
+    @action(methods=['post'], detail=False,url_path='maintenanceList')
+    @swagger_auto_schema(
+        request_body= maintenance_list_params,
+        responses={200: MaintenanceRecordSerializer(many=True)},
+        operation_description="Post list of alarm with pagination"
+    )
+    def post_list(self, request):
+        serializer = MaintenanceListRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            queryset = self.get_queryset().filter(deleted=0)
+            filter_kwargs = {}
+            if 'maintenance_id' in serializer.validated_data:
+                filter_kwargs['maintenance_id'] = serializer.validated_data['maintenance_id']
+            if 'equipment_id' in serializer.validated_data:
+                filter_kwargs['equipment_id'] = serializer.validated_data['equipment_id']
+            # Use the paginator directly here, relying on it to pull data from POST
+            queryset = self.filter_queryset(self.get_queryset().filter(**filter_kwargs))
+            paginator = self.pagination_class()
+            page = paginator.paginate_queryset(queryset, request, self)
+
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return paginator.get_paginated_response(serializer.data)
+
+        return Response({"code": 400, "message": "Invalid data", "data": serializer.errors},
+                        status=status.HTTP_400_BAD_REQUEST)
+
+
+    @action(methods=['post'], detail=True, url_path='delete')
+    def soft_delete(self, request, pk=None):
+        maintenance = self.get_object()
+        maintenance.deleted = 1
+        maintenance.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    # Custom 'list' action that accepts POST to fetch data
+
 
 

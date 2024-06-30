@@ -35,3 +35,45 @@ energysource_list_params = openapi.Schema(
         'page_size': openapi.Schema(type=openapi.TYPE_INTEGER, description='Number of items per page',default=10),
     }
 )
+
+energyconsumption_list_params = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    required=['page_number', 'page_size'],  # List required fields here
+    properties={
+        'consumption_id': openapi.Schema(type=openapi.TYPE_STRING, description='ID of the energyconsumption'),
+        'page_number': openapi.Schema(type=openapi.TYPE_INTEGER, description='Page number',default=1),
+        'page_size': openapi.Schema(type=openapi.TYPE_INTEGER, description='Number of items per page',default=10)
+    }
+)
+
+energyplan_list_params = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    required=['page_number', 'page_size'],  # List required fields here
+    properties={
+        'plan_id': openapi.Schema(type=openapi.TYPE_STRING, description='ID of the energyplan'),
+        'page_number': openapi.Schema(type=openapi.TYPE_INTEGER, description='Page number',default=1),
+        'page_size': openapi.Schema(type=openapi.TYPE_INTEGER, description='Number of items per page',default=10)
+    }
+)
+
+
+
+maintenance_list_params = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    required=['page_number', 'page_size'],  # List required fields here
+    properties={
+        'maintenance_id': openapi.Schema(type=openapi.TYPE_STRING, description='ID of the maintanence'),
+        'page_number': openapi.Schema(type=openapi.TYPE_INTEGER, description='Page number',default=1),
+        'page_size': openapi.Schema(type=openapi.TYPE_INTEGER, description='Number of items per page',default=10)
+    }
+)
+
+alarm_list_params = openapi.Schema(
+    type=openapi.TYPE_OBJECT,
+    required=['page_number', 'page_size'],  # List required fields here
+    properties={
+        'alarm_id': openapi.Schema(type=openapi.TYPE_STRING, description='ID of the alarm'),
+        'page_number': openapi.Schema(type=openapi.TYPE_INTEGER, description='Page number',default=1),
+        'page_size': openapi.Schema(type=openapi.TYPE_INTEGER, description='Number of items per page',default=10)
+    }
+)

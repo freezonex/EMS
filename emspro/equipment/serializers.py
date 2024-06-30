@@ -34,6 +34,11 @@ class EnergyConsumptionSerializer(serializers.ModelSerializer):
         model = EnergyConsumption
         fields = '__all__'
 
+class EnergyConsumptionListRequestSerializer(serializers.Serializer):
+    consumption_id = serializers.UUIDField(required=False)
+    page_number = serializers.IntegerField(required=True)
+    page_size = serializers.IntegerField(required=True)
+
 class EquipmentEnergySerializer(serializers.Serializer):
     name = serializers.CharField()
     energy_used = serializers.FloatField()
@@ -75,3 +80,21 @@ class EnergyPlanSerializer(serializers.ModelSerializer):
     class Meta:
         model = EnergyPlan
         fields = '__all__'
+
+class   AlarmListRequestSerializer(serializers.Serializer):
+    alarm_id = serializers.UUIDField(required=False)
+    equipment_id = serializers.UUIDField(required=False)
+    page_number = serializers.IntegerField(required=True)
+    page_size = serializers.IntegerField(required=True)
+
+class   EnergyPlanListRequestSerializer(serializers.Serializer):
+    plan_id = serializers.UUIDField(required=False)
+    plan_name = serializers.CharField(required=False)
+    page_number = serializers.IntegerField(required=True)
+    page_size = serializers.IntegerField(required=True)
+
+class   MaintenanceListRequestSerializer(serializers.Serializer):
+    maintenance_id = serializers.UUIDField(required=False)
+    equipment_id = serializers.UUIDField(required=False)
+    page_number = serializers.IntegerField(required=True)
+    page_size = serializers.IntegerField(required=True)
