@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Workshop, Equipment,EnergyConsumption,EnergySource,MaintenanceRecord
+from .models import Workshop, Equipment,EnergyConsumption,EnergySource,MaintenanceRecord,AlarmRecord,EnergyPlan
 
 class WorkshopSerializer(serializers.ModelSerializer):
     class Meta:
@@ -7,12 +7,10 @@ class WorkshopSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class WorkshopListRequestSerializer(serializers.Serializer):
-    workshop_id = serializers.IntegerField(required=False)
+    workshop_id = serializers.UUIDField(required=False)
     workshop_name = serializers.CharField(required=False)
     page_number = serializers.IntegerField(required=True)
     page_size = serializers.IntegerField(required=True)
-
-
 
 class WorkshopEnergySerializer(serializers.Serializer):
     name = serializers.CharField()
@@ -22,6 +20,14 @@ class EquipmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Equipment
         fields = '__all__'
+
+class EquipmentListRequestSerializer(serializers.Serializer):
+    equipment_id = serializers.UUIDField(required=False)
+    equipment_name = serializers.CharField(required=False)
+    page_number = serializers.IntegerField(required=True)
+    page_size = serializers.IntegerField(required=True)
+
+
 
 class EnergyConsumptionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,6 +48,13 @@ class EnergySourceSerializer(serializers.ModelSerializer):
         model = EnergySource
         fields = '__all__'
 
+class EnergySourceListRequestSerializer(serializers.Serializer):
+    source_id = serializers.UUIDField(required=False)
+    source_name = serializers.CharField(required=False)
+    page_number = serializers.IntegerField(required=True)
+    page_size = serializers.IntegerField(required=True)
+
+
 
 class EnergyTypeUsageSerializer(serializers.Serializer):
     energy_type = serializers.CharField()
@@ -50,4 +63,15 @@ class EnergyTypeUsageSerializer(serializers.Serializer):
 class MaintenanceRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = MaintenanceRecord
+        fields = '__all__'
+
+class AlarmRecordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AlarmRecord
+        fields = '__all__'
+
+
+class EnergyPlanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EnergyPlan
         fields = '__all__'
